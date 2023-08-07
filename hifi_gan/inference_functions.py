@@ -55,7 +55,7 @@ def load_generator(checkpoint_file):
     return generator
 
 
-def run_inference(generator, mel):
+def run_hifigan_inference(generator, mel):
     with torch.no_grad():
         x = torch.FloatTensor(mel).to(device)
         y_g_hat = generator(x)
