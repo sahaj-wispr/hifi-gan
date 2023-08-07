@@ -151,10 +151,10 @@ class MelDataset(torch.utils.data.Dataset):
                 frames_per_seg = math.ceil(self.segment_size / self.hop_size)
 
                 if audio.size(1) >= self.segment_size:
-                    mel_start = random.randint(0, mel.size(2) - frames_per_seg - 1)
+                    mel_start = random.randint(0, mel.size(2) - frames_per_seg - 2)
                     mel = mel[:, :, mel_start:mel_start + frames_per_seg]
                     audio = audio[:, mel_start * self.hop_size:(mel_start + frames_per_seg) * self.hop_size]
-                else:
+                if audio.size(1) < self.segment_size or mel.size(2) < frames_per_seg:
                     mel = torch.nn.functional.pad(mel, (0, frames_per_seg - mel.size(2)), 'constant')
                     audio = torch.nn.functional.pad(audio, (0, self.segment_size - audio.size(1)), 'constant')
 
