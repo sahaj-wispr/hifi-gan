@@ -7,11 +7,11 @@ import argparse
 import json
 import torch
 from scipy.io.wavfile import write
-from env import AttrDict
-from meldataset import MAX_WAV_VALUE
-from models import Generator
+from .env import AttrDict
+from .meldataset import MAX_WAV_VALUE
+from .models import Generator
 
-device = torch.cuda.is_available()
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def load_checkpoint(filepath, device):
@@ -31,6 +31,11 @@ def scan_checkpoint(cp_dir, prefix):
 
 
 def load_generator(checkpoint_file):
+    # If checkpoint file is absolute, use that, otherwise use relative path to this file
+    if not os.path.isabs(checkpoint_file):
+        relative_path = os.path.dirname(os.path.realpath(__file__))
+        checkpoint_file = os.path.join(relative_path, checkpoint_file)
+
     config_file = os.path.join(os.path.split(checkpoint_file)[0], "config.json")
     with open(config_file) as f:
         data = f.read()
