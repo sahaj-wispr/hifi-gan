@@ -55,7 +55,7 @@ def load_generator(checkpoint_file, device="cuda" if torch.cuda.is_available() e
 
 def run_hifigan_inference(generator, mel):
     with torch.no_grad():
-        x = torch.FloatTensor(mel).to(generator.device)
+        x = torch.FloatTensor(mel)
         y_g_hat = generator(x)
         audio = y_g_hat.squeeze()
         audio = audio * MAX_WAV_VALUE
