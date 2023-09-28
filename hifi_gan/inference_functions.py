@@ -11,8 +11,6 @@ from .env import AttrDict
 from .meldataset import MAX_WAV_VALUE
 from .models import Generator
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
 
 def load_checkpoint(filepath, device):
     assert os.path.isfile(filepath)
@@ -30,7 +28,7 @@ def scan_checkpoint(cp_dir, prefix):
     return sorted(cp_list)[-1]
 
 
-def load_generator(checkpoint_file):
+def load_generator(checkpoint_file, device="cuda" if torch.cuda.is_available() else "cpu"):
     # If checkpoint file is absolute, use that, otherwise use relative path to this file
     if not os.path.isabs(checkpoint_file):
         relative_path = os.path.dirname(os.path.realpath(__file__))
@@ -57,7 +55,7 @@ def load_generator(checkpoint_file):
 
 def run_hifigan_inference(generator, mel):
     with torch.no_grad():
-        x = torch.FloatTensor(mel).to(device)
+        x = torch.FloatTensor(mel).to(generator.device)
         y_g_hat = generator(x)
         audio = y_g_hat.squeeze()
         audio = audio * MAX_WAV_VALUE
