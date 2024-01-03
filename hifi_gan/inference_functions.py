@@ -57,7 +57,10 @@ def load_generator(checkpoint_file):
 
 def run_hifigan_inference(generator, mel):
     with torch.no_grad():
-        x = torch.FloatTensor(mel).to(device)
+        if not isinstance(mel, torch.Tensor):
+            x = torch.FloatTensor(mel).to(device)
+        else:
+            x = mel
         y_g_hat = generator(x)
         audio = y_g_hat.squeeze()
         audio = audio * MAX_WAV_VALUE
